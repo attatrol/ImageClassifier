@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 
 import attatrol.imageclassifier.ImageClassifier;
 import attatrol.imageclassifier.ImageClassifierException;
+import attatrol.imageclassifier.i18n.ImageClassifierI18nProvider;
 import attatrol.imageclassifier.imagehash.ImageHashFunction;
 import attatrol.neural.NeuralNetworkRuntimeException;
 import attatrol.neural.network.NeuralNetwork;
@@ -46,7 +47,7 @@ public class AnalyzeImageForm extends Stage {
             extentions.add("*." + token);
         }
         IMAGE_EXTENTION_FILTER = new ExtensionFilter(
-            "Supported images", extentions);
+                ImageClassifierI18nProvider.getText("analyzeimageform.extentionfiltername"), extentions);
     }
 
     private static File oldFileDirectory;
@@ -58,7 +59,7 @@ public class AnalyzeImageForm extends Stage {
 
     private TableView<ClassificationResult> resultView = new ClassificationResultTableView();
 
-    private Label fileNameLabel = new Label("File not chosen");
+    private Label fileNameLabel = new Label(ImageClassifierI18nProvider.getText("analyzeimageform.filenameinitialtext"));
 
     private ImageView imageView = new ImageView();
     {
@@ -124,7 +125,7 @@ public class AnalyzeImageForm extends Stage {
 
         private FileChooser fileChooser = new FileChooser();
         {
-            fileChooser.setTitle("Choose your image file:");
+            fileChooser.setTitle(ImageClassifierI18nProvider.getText("analyzeimageform.filechoosertitle"));
             if (oldFileDirectory != null) {
                 fileChooser.setInitialDirectory(oldFileDirectory);
             }
@@ -133,7 +134,7 @@ public class AnalyzeImageForm extends Stage {
         }
 
         public ChooseFileButton() {
-            super("Choose file button");
+            super(ImageClassifierI18nProvider.getText("analyzeimageform.choosefilebuttonname"));
             setOnAction(new EventHandler<ActionEvent>() {
 
                 @Override
@@ -154,7 +155,8 @@ public class AnalyzeImageForm extends Stage {
                                 UiUtils.showTestMessage(ex.getLocalizedMessage());
                             }
                         } catch (FileNotFoundException ex1) {
-                            UiUtils.showTestMessage("Failed to find a file");
+                            UiUtils.showTestMessage(ImageClassifierI18nProvider
+                                    .getText("analyzeimageform.filenotfounderror"));
                         }
                     }
                 }
@@ -212,13 +214,14 @@ public class AnalyzeImageForm extends Stage {
         @SuppressWarnings("unchecked")
         public ClassificationResultTableView() {
             super();
-            TableColumn<ClassificationResult, String> className = new TableColumn<>("Class name");
+            TableColumn<ClassificationResult, String> className = new TableColumn<>(
+                    ImageClassifierI18nProvider.getText("analyzeimageform.table.classnamecolumn"));
             className.setMinWidth(430);
             className.setCellValueFactory(
                     new PropertyValueFactory<ClassificationResult, String>("className"));
 
             TableColumn<ClassificationResult, Double> classAffinity = new TableColumn<>(
-                    "Class affinity");
+                    ImageClassifierI18nProvider.getText("analyzeimageform.table.classaffinitycolumn"));
             classAffinity.setMinWidth(230);
             classAffinity.setCellValueFactory(
                     new PropertyValueFactory<ClassificationResult, Double>("classAffinity"));

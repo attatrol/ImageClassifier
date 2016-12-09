@@ -33,7 +33,7 @@ public class DefaultImageHashFunctionFactory implements AbstractUiFactory<ImageH
 
     @Override
     public String toString() {
-        return "Default hash function";
+        return ImageClassifierI18nProvider.getText("defaulthashfunctionfactory.name");
     }
 
     public static class DefaultImageHashReturnDialog extends GenericValueReturnDialog<ImageHashFunction> {
