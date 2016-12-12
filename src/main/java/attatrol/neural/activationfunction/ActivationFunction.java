@@ -1,5 +1,7 @@
 package attatrol.neural.activationfunction;
 
+import java.io.Serializable;
+
 import attatrol.neural.NeuralNetworkGenerationException;
 
 /**
@@ -13,7 +15,7 @@ import attatrol.neural.NeuralNetworkGenerationException;
  * @author attatrol
  *
  */
-public interface ActivationFunction {
+public interface ActivationFunction extends Serializable {
 
     /**
      * Calculates function value. Must be in [0, 1].

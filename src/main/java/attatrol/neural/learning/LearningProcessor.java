@@ -1,5 +1,7 @@
 package attatrol.neural.learning;
 
+import java.io.Serializable;
+
 import attatrol.neural.NeuralNetworkGenerationException;
 import attatrol.neural.NeuralNetworkRuntimeException;
 import attatrol.neural.analysis.AnalyticalProcessor;
@@ -15,7 +17,7 @@ import attatrol.neural.network.NeuralNetworkState;
  * @author attatrol
  *
  */
-public interface LearningProcessor {
+public interface LearningProcessor extends Serializable {
 
     /**
      * Modifies internal state of neural network after analytical processor.

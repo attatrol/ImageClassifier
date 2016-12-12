@@ -10,6 +10,10 @@ import attatrol.neural.NeuralNetworkGenerationException;
 public class SigmoidFunction implements ActivationFunction {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 857735048222522758L;
+    /**
      * flatness ratio. lays between 0 and +inf, lower value mkes function flatter.
      * Inverts function if lays between -inf and 0. If value is zeroed then
      * neural network will fail to work. However last two cases are explicitly forbidden.

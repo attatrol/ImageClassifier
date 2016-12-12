@@ -13,6 +13,10 @@ import attatrol.neural.activationfunction.ActivationFunction;
 public class StochasticActivationFunctionAnalyzer extends ActivationFunctionAnalyzer {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -6232414021242235505L;
+    /**
      * Source of random numbers.
      */
     private Random random = new Random();

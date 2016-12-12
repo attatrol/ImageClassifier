@@ -20,6 +20,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -64,6 +65,14 @@ public class NeuralNetworkLearningDialog extends GenericValueReturnDialog<Boolea
         this.neuralNetwork = neuralNetwork;
         this.learningPairs = learningPairs;
         setContent();
+        this.setOnCloseRequest(new EventHandler<DialogEvent>() {
+
+            @Override
+            public void handle(DialogEvent event) {
+                isLearningProcessAlive = false;
+            }
+
+        });
     }
 
     private void setContent() {

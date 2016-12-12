@@ -13,6 +13,11 @@ import attatrol.neural.network.NeuralNetworkState;
 public class BackpropagationLearner extends AbstractErrorMinimizerLearner {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -3690211285958660008L;
+
+    /**
      * This factor influences overall change speed of neuron weights.
      * In other projects i saw its value between 0.1 and 0.05.
      * Generally speaking, if your learning set is large enough,

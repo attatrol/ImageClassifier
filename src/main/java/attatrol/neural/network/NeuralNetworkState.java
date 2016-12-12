@@ -1,5 +1,7 @@
 package attatrol.neural.network;
 
+import java.io.Serializable;
+
 /**
  * POJO class, holds internal state of neural network.
  * It has 2 purposes:
@@ -18,7 +20,12 @@ package attatrol.neural.network;
  * @author attatrol
  *
  */
-public class NeuralNetworkState {
+public class NeuralNetworkState implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3829019744306394773L;
 
     private final transient boolean isShallowCopy;
 
@@ -178,9 +185,5 @@ public class NeuralNetworkState {
     public boolean isShallowCopy() {
         return isShallowCopy;
     }
-
-    
-
-    
 
 }

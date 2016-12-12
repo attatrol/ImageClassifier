@@ -1,5 +1,7 @@
 package attatrol.neural.analysis;
 
+import java.io.Serializable;
+
 import attatrol.neural.NeuralNetworkGenerationException;
 import attatrol.neural.learning.LearningProcessor;
 import attatrol.neural.network.NeuralNetworkState;
@@ -10,7 +12,7 @@ import attatrol.neural.network.NeuralNetworkState;
  * @author attatrol
  *
  */
-public interface AnalyticalProcessor {
+public interface AnalyticalProcessor extends Serializable {
 
     /**
      * Calculates linear combinations and result values for all neurons.

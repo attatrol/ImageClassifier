@@ -1,5 +1,9 @@
 package attatrol.imageclassifier.ui;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import attatrol.imageclassifier.ImageClass;
@@ -7,6 +11,7 @@ import attatrol.imageclassifier.ImageClassifier;
 import attatrol.imageclassifier.ImageClassifierException;
 import attatrol.imageclassifier.i18n.ImageClassifierI18nProvider;
 import attatrol.imageclassifier.imagehash.ImageHashFunction;
+import attatrol.imageclassifier.serialization.ImageClassifierSerializationBean;
 import attatrol.imageclassifier.ui.imagehash.DefaultImageHashFunctionFactory;
 import attatrol.neural.network.NeuralNetwork;
 import attatrol.neural.ui.javafx.NeuralNetworkFactoryDialog;
@@ -29,10 +34,17 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 @SuppressWarnings("unchecked")
+/**
+ * Main form of the image classifier application
+ * @author attatrol
+ *
+ */
 public class MainForm extends Scene {
 
     /*
@@ -55,8 +67,10 @@ public class MainForm extends Scene {
                 if (hashFunctioncomboBox.getResult() != null) {
                     setState(InternalState.HASH_CHOSEN);
                     hashFunction = hashFunctioncomboBox.getResult();
+                    classifier = null;
+                    tableRows.clear();
                 } else {
-                    setState(InternalState.INITIAL_STATE);
+                    //setState(InternalState.INITIAL_STATE);
                 }
             }
 
@@ -71,6 +85,17 @@ public class MainForm extends Scene {
     private Button teachButton = new TeachButton();
 
     private Button useButton = new UseButton();
+
+    private MenuItem saveMenuOption = new SaveClassifierMenuItem();
+
+    private MenuItem loadMenuOption = new LoadClassifierMenuItem();
+
+    private FileChooser serializationFileChooser = new FileChooser();
+    {
+        List<String> formats = new ArrayList<>();
+        formats.add("*.nnic");
+        serializationFileChooser.getExtensionFilters().add(new ExtensionFilter("Neural Classifier", formats));
+    }
 
     /**
      * Holds state of the table view.
@@ -98,8 +123,6 @@ public class MainForm extends Scene {
         // menu bar
         MenuBar menuBar = new MenuBar();
         Menu menuFile = new Menu(ImageClassifierI18nProvider.getText("mainform.menutitle"));
-        MenuItem saveMenuOption = new MenuItem(ImageClassifierI18nProvider.getText("mainform.savemenuitem"));
-        MenuItem loadMenuOption = new MenuItem(ImageClassifierI18nProvider.getText("mainform.loadmenuitem"));
         menuFile.getItems().addAll(saveMenuOption, loadMenuOption);
         menuBar.getMenus().addAll(menuFile);
         // grid pane
@@ -146,6 +169,7 @@ public class MainForm extends Scene {
                 networkSetupButton.setDisable(true);
                 teachButton.setDisable(true);
                 useButton.setDisable(true);
+                saveMenuOption.setDisable(true);
                 tableRows.clear();
                 break;
             case HASH_CHOSEN:
@@ -153,6 +177,7 @@ public class MainForm extends Scene {
                 networkSetupButton.setDisable(true);
                 teachButton.setDisable(true);
                 useButton.setDisable(true);
+                saveMenuOption.setDisable(true);
                 tableRows.clear();
                 break;
             case CLASSIFIER_SET:
@@ -160,18 +185,21 @@ public class MainForm extends Scene {
                 networkSetupButton.setDisable(false);
                 teachButton.setDisable(true);
                 useButton.setDisable(true);
+                saveMenuOption.setDisable(true);
                 break;
             case NETWORK_SET:
                 classSetupButton.setDisable(false);
                 networkSetupButton.setDisable(false);
                 teachButton.setDisable(false);
                 useButton.setDisable(true);
+                saveMenuOption.setDisable(false);
                 break;
             case NETWORK_LEARNED:
                 classSetupButton.setDisable(false);
                 networkSetupButton.setDisable(false);
                 teachButton.setDisable(false);
                 useButton.setDisable(false);
+                saveMenuOption.setDisable(false);
                 break;
         }
     }
@@ -230,20 +258,27 @@ public class MainForm extends Scene {
                 public void handle(ActionEvent event) {
                     NeuralNetworkLearningDialog teachForm;
                     try {
-                        teachForm = new NeuralNetworkLearningDialog(neuralNetwork,
-                                classifier.getLearningPairs());
-                        final Optional<Boolean> teachingStatus = teachForm.showAndWait();
-                        if (teachingStatus.isPresent()) {
-                            if (teachingStatus.get()) {
-                                setState(InternalState.NETWORK_LEARNED);
-                            } else {
-                                UiUtils.showTestMessage(ImageClassifierI18nProvider
-                                        .getText("mainform.networklearningfailederror"));
+                        classifier.validate();
+                        try {
+                            teachForm = new NeuralNetworkLearningDialog(neuralNetwork,
+                                    classifier.getLearningPairs());
+                            final Optional<Boolean> teachingStatus = teachForm.showAndWait();
+                            if (teachingStatus.isPresent()) {
+                                if (teachingStatus.get()) {
+                                    setState(InternalState.NETWORK_LEARNED);
+                                } else {
+                                    UiUtils.showTestMessage(ImageClassifierI18nProvider
+                                            .getText("mainform.networklearningfailederror"));
+                                }
                             }
+    
+                        } catch (ImageClassifierException ex) {
+                            UiUtils.showTestMessage(ex.getLocalizedMessage());
                         }
-
-                    } catch (ImageClassifierException ex) {
-                        UiUtils.showTestMessage(ex.getLocalizedMessage());
+                    }
+                    catch (IllegalStateException ex2) {
+                        UiUtils.showTestMessage("Cannot learn because class set is not consistent:\n"
+                                + ex2.getLocalizedMessage());
                     }
                 }
             });
@@ -266,6 +301,63 @@ public class MainForm extends Scene {
             });
         }
 
+    }
+
+    private class SaveClassifierMenuItem extends MenuItem {
+
+        public SaveClassifierMenuItem() {
+            super(ImageClassifierI18nProvider.getText("mainform.savemenuitem"));
+            setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(ActionEvent event) {
+                    File file = serializationFileChooser.showSaveDialog(getWindow());
+                    if (file != null) {
+                        try {
+                            ImageClassifierSerializationBean.serialize(hashFunction,
+                                    classifier, neuralNetwork, file);
+                        } catch (IOException e) {
+                            UiUtils.showTestMessage("Serialization error: " + e.getLocalizedMessage());
+                        }
+                    }
+                }
+
+            });
+        }
+    }
+
+    private class LoadClassifierMenuItem extends MenuItem {
+
+        public LoadClassifierMenuItem() {
+            super(ImageClassifierI18nProvider.getText("mainform.loadmenuitem"));
+            setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(ActionEvent event) {
+                    File file = serializationFileChooser.showOpenDialog(getWindow());
+                    if (file != null) {
+                        try {
+                            ImageClassifierSerializationBean bean =
+                                    ImageClassifierSerializationBean.deserialize(file);
+                            neuralNetwork = bean.getNeuralNetwork();
+                            classifier = bean.getClassifier();
+                            try {
+                                classifier.validate();
+                            }
+                            catch (IllegalStateException ex2) {
+                                UiUtils.showTestMessage(ex2.getLocalizedMessage());
+                            }
+                            tableRows.addAll(classifier.getClassesAsRows());
+                            hashFunction = bean.getHashFunction();
+                            setState(InternalState.NETWORK_LEARNED);
+                        } catch (ClassNotFoundException | IOException ex) {
+                            UiUtils.showTestMessage(ex.getLocalizedMessage());
+                        }
+                    }
+                }
+
+            });
+        }
     }
 
     private enum InternalState {

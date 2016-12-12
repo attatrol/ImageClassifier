@@ -12,6 +12,11 @@ import attatrol.neural.NeuralNetworkGenerationException;
 public class QuadraticError implements ErrorFunction {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1764209472400171543L;
+
+    /**
      * {@inheritDoc}
      */
     @Override

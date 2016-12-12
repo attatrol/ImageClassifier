@@ -2,6 +2,7 @@ package attatrol.imageclassifier.ui;
 
 import attatrol.imageclassifier.ImageClass;
 import attatrol.imageclassifier.i18n.ImageClassifierI18nProvider;
+import attatrol.neural.ui.javafx.misc.UiUtils;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -35,7 +36,11 @@ public class ClassifierPresentationTable extends TableView<ImageClass> {
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
                     ImageClass rowData = row.getItem();
-                    rowData.getImageGallery().show();
+                    try {
+                        rowData.getImageGallery().show();
+                    } catch (Exception e) {
+                        UiUtils.showTestMessage(e.getLocalizedMessage());
+                    }
                 }
             });
             return row ;

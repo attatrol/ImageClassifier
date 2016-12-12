@@ -1,5 +1,6 @@
 package attatrol.imageclassifier;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,12 +9,23 @@ import java.util.TreeSet;
 
 import attatrol.imageclassifier.i18n.ImageClassifierI18nProvider;
 
-public class ImageClassifier implements Cloneable {
+public class ImageClassifier implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -772714038661163710L;
 
     public static final int MINIMAL_CLASS_SIZE = 10;
 
+    /**
+     * Ordered list of image classes
+     */
     private NavigableSet<ImageClass> classes = new TreeSet<>();
 
+    /**
+     * Ordered list of image classes' names, the order is the same, as in {@link #classes}
+     */
     private NavigableSet<String> classNames = new TreeSet<>();
 
     /**
@@ -104,4 +116,21 @@ public class ImageClassifier implements Cloneable {
     public int getSize() {
         return classes.size();
     }
+
+    /**
+     * Used for validation of image classes after 
+     * @return
+     */
+    public void validate() throws IllegalStateException {
+        StringBuilder sb = new StringBuilder();
+        for (ImageClass iClass : classes) {
+            if (!iClass.validate()) {
+                sb.append(String.format("Can not find folder for class: %s", iClass))
+                    .append(System.getProperty("line.separator"));
+            }
+        }
+        if (sb.length() != 0) {
+            throw new IllegalStateException(sb.toString());
+        }
+     }
 }

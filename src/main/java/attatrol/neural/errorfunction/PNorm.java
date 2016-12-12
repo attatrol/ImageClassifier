@@ -12,6 +12,11 @@ import attatrol.neural.NeuralNetworkGenerationException;
 public class PNorm implements ErrorFunction {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 8005683674298001118L;
+
+    /**
      * p-norm coefficient
      */
     private final double p;

@@ -13,6 +13,10 @@ import attatrol.neural.network.NeuralNetworkState;
 public class ActivationFunctionAnalyzer implements AnalyticalProcessor{
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 2001012601941768515L;
+    /**
      * Activation function, maps linear combination in [0, 1].
      */
     protected ActivationFunction activationFunction;

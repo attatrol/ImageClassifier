@@ -1,5 +1,7 @@
 package attatrol.neural.errorfunction;
 
+import java.io.Serializable;
+
 import attatrol.neural.NeuralNetworkGenerationException;
 
 /**
@@ -12,7 +14,7 @@ import attatrol.neural.NeuralNetworkGenerationException;
  * @author attatrol
  *
  */
-public interface ErrorFunction {
+public interface ErrorFunction extends Serializable {
 
     /**
      * Calculates value of the error function.

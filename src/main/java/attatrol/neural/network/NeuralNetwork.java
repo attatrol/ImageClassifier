@@ -143,7 +143,51 @@ public class NeuralNetwork {
             weight[i] = RandomUtils.generateRandomFloats(
                     RAMDOM_WEIGHT_MIN, RANDOM_WEIGHT_MAX, parents[i].length);
         }
+    }
 
+    /**
+     * Constructs neural network from state of some other neural network.
+     * {@link NeuralNetwork} is not serializable intentionally, so 
+     * serialize {@link NeuralNetworkState} instead and use this
+     * constructor for deserialization purposes.
+     * @param state state of a neural network
+     * @param analyticalProcessor analytical processor
+     * @param learningProcessor learning processor
+     */
+    public NeuralNetwork (NeuralNetworkState state, AnalyticalProcessor analyticalProcessor,
+            LearningProcessor learningProcessor) {
+        this.analyticalProcessor = analyticalProcessor;
+        this.learningProcessor = learningProcessor;
+        replaceNetworkState(state);
+    }
+
+    /**
+     * Topology is immutable and not in use after initialization of a neural network.
+     * So it is just an informational reference, sometimes topology can be null.
+     * @return topology used to create this network
+     */
+    public Topology getTopology() {
+        return topology;
+    }
+
+    /**
+     * Please, remember, that analytical processor may have its own internal state and thus
+     * may be interrelated with current neural network. Also, one processor should not be used
+     * with several networks as there is not concurrent.
+     * @return analytical processor
+     */
+    public AnalyticalProcessor getAnalythicalProcessor() {
+        return analyticalProcessor;
+    }
+
+    /**
+     * Please, remember, that learning processor may have its own internal state and thus
+     * may be interrelated with current neural network. Also, one processor should not be used
+     * with several networks as there is not concurrent.
+     * @return learning processor
+     */
+    public LearningProcessor getLearningProcessor() {
+        return learningProcessor;
     }
 
     /**

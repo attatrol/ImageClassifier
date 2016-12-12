@@ -15,18 +15,42 @@ public class Topology {
      */
     protected final static int INTEGER_PADDING = 4;
 
+    /**
+     * Title used in {@link #toString()}
+     */
     protected final static String TOPOLOGY_TITLE = " Ordinary topology of neural network:";
 
+    /**
+     * Total number of sources (neurons and coordinates of incoming vector)
+     */
     protected final int sourceTotalNumber;
 
+    /**
+     * Index of the first neuron. (First among sources are those of incoming vector,
+     * neurons are after them).
+     */
     protected final int neuronFirstIndex;
 
+    /**
+     * Index of the first surface neuron. Neurons that give values to the result vector are called 
+     * "surface", and they should be located in the end of the sources array.
+     */
     protected final int surfaceNeuronFirstIndex;
 
+    /**
+     * Sources give their output to their children, who are listed in this arrays
+     */
     protected final int[][] sourceChildren;
 
+    /**
+     * Sources recieve their input values from other sources who are parents for them.
+     * Note that input vector coordinates have zero parents.
+     */
     protected final int[][] sourceParents;
 
+    /**
+     * Defines order in which analytical processor will traverse neurons
+     */
     protected final int[] forwardTraverseNeuronsOrder;
 
     public Topology(int sourceTotalNumber, int neuronFirstIndex, int surfaceNeuronFirstIndex,

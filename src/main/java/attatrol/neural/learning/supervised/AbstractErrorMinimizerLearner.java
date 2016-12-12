@@ -16,6 +16,10 @@ import attatrol.neural.network.NeuralNetworkState;
 public abstract class AbstractErrorMinimizerLearner implements LearningProcessor {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 8441388274838367331L;
+    /**
      * Error function.
      */
     protected ErrorFunction errorFunction;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.Serializable;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
@@ -29,7 +30,17 @@ import javafx.stage.Stage;
  * @author attatrol
  *
  */
-public class ImageClass implements Comparable<ImageClass> {
+public class ImageClass implements Comparable<ImageClass>, Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7608034545312548794L;
+
+    /**
+     * Maximal number of preview thumbnails on image panel per class
+     */
+    private static final int MAX_PREVIEW_NUMBER = 0;
 
     /**
      * Filters files with supported formats.
@@ -134,9 +145,14 @@ public class ImageClass implements Comparable<ImageClass> {
         tile.setPadding(new Insets(15, 15, 15, 15));
         tile.setHgap(15);
 
+        int counter = MAX_PREVIEW_NUMBER;
         for (final File file : imageFiles) {
             ImageView imageView = createImageView(file);
             tile.getChildren().addAll(imageView);
+            counter--;
+            if (counter == 0) {
+                break;
+            }
         }
 
         root.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Horizontal
@@ -197,12 +213,8 @@ public class ImageClass implements Comparable<ImageClass> {
         return result;
     }
 
-    public ImageGallery getImageGallery() {
-        try {
+    public ImageGallery getImageGallery() throws FileNotFoundException {
             return new ImageGallery();
-        } catch (FileNotFoundException e) {
-            return null;
-        }
     }
 
     /**
@@ -211,6 +223,14 @@ public class ImageClass implements Comparable<ImageClass> {
     @Override
     public int compareTo(ImageClass o) {
         return imageFolder.compareTo(o.getImageFolder());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("%s : %s", className, imageFolder);
     }
 
     /**
